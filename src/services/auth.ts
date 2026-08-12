@@ -1,5 +1,7 @@
 import { API_URL } from "@/config/api";
+import * as SecureStore from "expo-secure-store";
 
+// Funciones de pagina de index
 export async function register(
   email: string,
   firstName: string,
@@ -43,9 +45,10 @@ export async function login(email: string, password: string) {
   });
 
   const data = await response.json();
+  console.log(data);
 
   if (!response.ok) {
-    throw new Error(data.message || "Error al iniciar sesión");
+    throw new Error(`Error al iniciar sesión: ${data?.message}`);
   }
 
   return data;
@@ -70,4 +73,19 @@ export async function forgotPassword(email: string, referralMatricula: string) {
   }
 
   return data;
+}
+
+//funciones de manejo de token
+const TOKEN_KEY = "bearer_token";
+
+export async function saveToken(token: string) {
+  await SecureStore.setItemAsync(TOKEN_KEY, token);
+}
+
+export async function getToken() {
+  return await SecureStore.getItemAsync(TOKEN_KEY);
+}
+
+export async function deleteToken() {
+  await SecureStore.deleteItemAsync(TOKEN_KEY);
 }

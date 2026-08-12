@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
+import { router } from "expo-router";
 
 import LoginForm from "../components/auth/LoginForm";
 import RegisterForm from "../components/auth/RegisterForm";
 import ForgotPasswordForm from "../components/auth/ForgotPasswordForm";
 
-import { login, register, forgotPassword } from "../services/auth";
+import { login, register, forgotPassword, saveToken } from "../services/auth";
 
 import { authStyles } from "../styles/authStyles";
 
@@ -26,6 +27,18 @@ export default function Index() {
       const response = await login(email, password);
 
       console.log(response);
+      
+      
+      await saveToken(response.data.token);
+
+      if (!response.data.profileCompleted) {
+        router.replace("/setup");
+      } else {
+        Alert.alert(
+          "Ya esta registrado",
+          "Ya tu cuenta esta registrada! mensaje temporal",
+        );
+      }
     } catch (error) {
       console.error(error);
     }
