@@ -34,11 +34,11 @@ export async function updateProfile(
   }
 
   if (response.status === 422) {
-    throw new Error(data.message || data.error || "Revisa los datos ingresados e intenta de nuevo.");
+    throw new Error(data.message || "Revisa los datos ingresados e intenta de nuevo.");
   }
 
   if (!response.ok || !data.ok) {
-    throw new Error(data.message || data.error || "No se pudo actualizar el perfil.");
+    throw new Error(data.message || "No se pudo actualizar el perfil.");
   }
 
   return data.data;
