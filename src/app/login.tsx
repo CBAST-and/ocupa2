@@ -11,6 +11,7 @@ import { login, register, forgotPassword, saveToken } from "../services/auth";
 import { authStyles } from "../styles/authStyles";
 
 import { AuthMode } from "@/types/AuthMode";
+import { setStoredJson } from "@/services/storage";
 
 export default function Index() {
   const [mode, setMode] = useState<AuthMode>("login");
@@ -29,19 +30,15 @@ export default function Index() {
       console.log(response);
 
       await saveToken(response.data.token);
+      await setStoredJson("ocupa2_session_user", { email });
 
       if (!response.data.profileCompleted) {
         router.replace("/setup");
       } else {
-        Alert.alert(
-          "Ya esta registrado",
-          "Ya tu cuenta esta registrada! mensaje temporal",
-        );
-
-        router.replace("/");
+        router.replace("/dashboard");
       }
     } catch (error) {
-      console.error(error);
+      Alert.alert("No se pudo iniciar sesión", error instanceof Error ? error.message : "Revisa tus datos e intenta nuevamente.");
     }
   };
 
@@ -56,12 +53,13 @@ export default function Index() {
       );
 
       await saveToken(response.data.token);
+      await setStoredJson("ocupa2_session_user", { email, firstName: nombre });
 
       router.replace("/setup");
 
       console.log(response);
     } catch (error) {
-      console.error(error);
+      Alert.alert("No se pudo crear la cuenta", error instanceof Error ? error.message : "Revisa los datos e intenta nuevamente.");
     }
   };
 
@@ -73,7 +71,7 @@ export default function Index() {
 
       console.log(response);
     } catch (error) {
-      console.error(error);
+      Alert.alert("No se pudo recuperar la contraseña", error instanceof Error ? error.message : "Revisa los datos e intenta nuevamente.");
     }
   };
 
