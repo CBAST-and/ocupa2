@@ -1,5 +1,6 @@
-import { ScrollView, Text, Pressable, StyleSheet } from "react-native";
+import { colors, radius, spacing } from "@/styles/tokens";
 import { JobType } from "@/types/OfferType";
+import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
 
 type Props = {
   jobTypes: JobType[];
@@ -12,15 +13,12 @@ export function JobTypeFilter({ jobTypes, selectedKey, onSelect }: Props) {
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={styles.container}
       contentContainerStyle={styles.row}>
       <Pressable
         style={[styles.chip, selectedKey === null && styles.chipSelected]}
         onPress={() => onSelect(null)}>
-        <Text
-          style={[
-            styles.chipText,
-            selectedKey === null && styles.chipTextSelected,
-          ]}>
+        <Text style={[styles.chipText, selectedKey === null && styles.chipTextSelected]}>
           Todos
         </Text>
       </Pressable>
@@ -28,10 +26,7 @@ export function JobTypeFilter({ jobTypes, selectedKey, onSelect }: Props) {
       {jobTypes.map((jobType) => (
         <Pressable
           key={jobType.id}
-          style={[
-            styles.chip,
-            selectedKey === jobType.key && styles.chipSelected,
-          ]}
+          style={[styles.chip, selectedKey === jobType.key && styles.chipSelected]}
           onPress={() => onSelect(jobType.key)}>
           <Text
             style={[
@@ -47,32 +42,44 @@ export function JobTypeFilter({ jobTypes, selectedKey, onSelect }: Props) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flexGrow: 0,
+    flexShrink: 0,
+    height: 56,
+  },
+
   row: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    gap: 8,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.sm,
+    gap: spacing.sm,
+    alignItems: "center",
   },
 
   chip: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    borderColor: colors.hairline,
+    borderRadius: radius.pill,
+    paddingVertical: 10,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.card,
+    justifyContent: "center",
+    alignSelf: "flex-start",
   },
 
   chipSelected: {
-    borderColor: "rgb(53, 107, 255)",
-    backgroundColor: "rgba(53, 107, 255, 0.1)",
+    borderColor: colors.ink,
+    backgroundColor: colors.ink,
   },
 
   chipText: {
     fontSize: 14,
-    color: "#333",
+    lineHeight: 18,
+    color: colors.ink,
+    fontWeight: "600",
   },
 
   chipTextSelected: {
-    color: "rgb(53, 107, 255)",
-    fontWeight: "bold",
+    color: colors.paper,
+    fontWeight: "700",
   },
 });

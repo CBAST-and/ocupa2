@@ -1,18 +1,19 @@
+import { JobTypeFilter } from "@/components/offers/JobTypeFilter";
+import { OfferCard } from "@/components/offers/OfferCard";
+import { getJobTypes, getOffers } from "@/services/offers";
+import { colors, radius, spacing, type } from "@/styles/tokens";
+import { JobType, Offer } from "@/types/OfferType";
+import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
-  View,
-  Text,
+  ActivityIndicator,
   FlatList,
   Pressable,
-  ActivityIndicator,
-  StyleSheet,
   RefreshControl,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import { router } from "expo-router";
-import { OfferCard } from "@/components/offers/OfferCard";
-import { JobTypeFilter } from "@/components/offers/JobTypeFilter";
-import { getOffers, getJobTypes } from "@/services/offers";
-import { JobType, Offer } from "@/types/OfferType";
 
 export default function ExploreOffers() {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -23,7 +24,6 @@ export default function ExploreOffers() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Carga el catálogo de tipos de trabajo una sola vez, para el filtro
   useEffect(() => {
     getJobTypes()
       .then(setJobTypes)
@@ -33,9 +33,7 @@ export default function ExploreOffers() {
   const loadOffers = useCallback(async (jobTypeKey: string | null) => {
     try {
       setError(null);
-
       const data = await getOffers(jobTypeKey ? { jobTypeKey } : {});
-
       setOffers(data);
     } catch (err) {
       console.error("Error obteniendo ofertas:", err);
@@ -45,7 +43,6 @@ export default function ExploreOffers() {
     }
   }, []);
 
-  // Carga inicial y recarga cuando cambia el filtro seleccionado
   useEffect(() => {
     setLoading(true);
     loadOffers(selectedJobTypeKey).finally(() => setLoading(false));
@@ -59,7 +56,10 @@ export default function ExploreOffers() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Explorar ofertas</Text>
+      <View style={styles.header}>
+        <Text style={styles.eyebrow}>Ocupa2 · Empleos activos</Text>
+        <Text style={styles.title}>Explorar ofertas</Text>
+      </View>
 
       <JobTypeFilter
         jobTypes={jobTypes}
@@ -73,22 +73,19 @@ export default function ExploreOffers() {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" />
-          <Text>Cargando ofertas...</Text>
+          <ActivityIndicator size="large" color={colors.green} />
+          <Text style={styles.centerText}>Cargando ofertas...</Text>
         </View>
       ) : error ? (
         <View style={styles.center}>
-          <Text>{error}</Text>
-
-          <Pressable
-            onPress={() => loadOffers(selectedJobTypeKey)}
-            style={styles.button}>
-            <Text style={styles.buttonText}>Reintentar</Text>
+          <Text style={styles.centerText}>{error}</Text>
+          <Pressable onPress={() => loadOffers(selectedJobTypeKey)} style={styles.retryButton}>
+            <Text style={styles.retryButtonText}>Reintentar</Text>
           </Pressable>
         </View>
       ) : offers.length === 0 ? (
         <View style={styles.center}>
-          <Text>No hay ofertas disponibles por ahora.</Text>
+          <Text style={styles.centerText}>No hay ofertas disponibles por ahora.</Text>
         </View>
       ) : (
         <FlatList
@@ -97,7 +94,7 @@ export default function ExploreOffers() {
           renderItem={({ item }) => <OfferCard offer={item} />}
           contentContainerStyle={styles.list}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.green} />
           }
         />
       )}
@@ -108,52 +105,69 @@ export default function ExploreOffers() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: colors.paper,
   },
 
   header: {
-    fontSize: 28,
-    fontWeight: "bold",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.sm,
+  },
+
+  eyebrow: {
+    ...type.eyebrow,
+    color: colors.green,
+    marginBottom: spacing.xs,
+  },
+
+  title: {
+    ...type.display,
   },
 
   mapButton: {
-    marginHorizontal: 20,
-    marginBottom: 10,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: "rgb(53, 107, 255)",
+    marginHorizontal: spacing.xl,
+    marginBottom: spacing.md,
+    paddingVertical: 12,
+    borderRadius: radius.md,
+    backgroundColor: colors.ink,
     alignItems: "center",
   },
 
   mapButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: colors.paper,
+    fontWeight: "700",
+    fontSize: 14,
+    letterSpacing: 0.3,
   },
 
   list: {
-    padding: 20,
-    gap: 16,
+    padding: spacing.xl,
+    gap: spacing.lg,
   },
 
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
+    gap: spacing.md,
+    paddingHorizontal: spacing.xl,
   },
 
-  button: {
-    paddingHorizontal: 20,
+  centerText: {
+    ...type.body,
+    color: colors.inkMuted,
+    textAlign: "center",
+  },
+
+  retryButton: {
+    paddingHorizontal: spacing.xl,
     paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: "#208AEF",
+    borderRadius: radius.md,
+    backgroundColor: colors.green,
   },
 
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
+  retryButtonText: {
+    color: colors.white,
+    fontWeight: "700",
   },
 });

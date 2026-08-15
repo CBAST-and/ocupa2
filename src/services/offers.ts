@@ -79,3 +79,71 @@ export async function getJobTypes(): Promise<JobType[]> {
 
   return data.data;
 }
+
+export async function getOfferById(id: string): Promise<Offer> {
+  const token = await getToken();
+
+  if (!token) {
+    throw new Error("No se encontró una sesión activa. Inicia sesión nuevamente.");
+  }
+
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_URL}/offers/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Revisa tu conexión.");
+  }
+
+  const data = await response.json();
+
+  if (response.status === 401) {
+    throw new Error("Tu sesión expiró. Inicia sesión nuevamente.");
+  }
+
+  if (!response.ok || !data.ok) {
+    throw new Error(data.message || "No se pudo cargar la oferta.");
+  }
+
+  return data.data;
+}
+
+export type ApplyAnswer = { questionId: string; value: string };
+export type ApplyPayload = { comment: string; answers: ApplyAnswer[] };
+
+export async function applyToOffer(id: string, payload: ApplyPayload): Promise<void> {
+  const token = await getToken();
+
+  if (!token) {
+    throw new Error("No se encontró una sesión activa. Inicia sesión nuevamente.");
+  }
+
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_URL}/offers/${id}/apply`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Revisa tu conexión.");
+  }
+
+  const data = await response.json();
+
+  if (response.status === 401) {
+    throw new Error("Tu sesión expiró. Inicia sesión nuevamente.");
+  }
+
+  if (!response.ok || !data.ok) {
+    throw new Error(data.message || "No se pudo enviar tu aplicación.");
+  }
+}

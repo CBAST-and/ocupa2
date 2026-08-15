@@ -1,11 +1,10 @@
-import { Text, View } from "react-native";
-import AuthInput from "../auth/AuthInput";
-import ProfileButton from "./ProfileButton";
-import GenderSelector from "./GenderSelector";
-import BirthDateField from "./BirthDateField";
-import { authStyles } from "../../styles/authStyles";
-import { profileStyles } from "../../styles/profileStyles";
 import { Gender } from "@/types/ProfileType";
+import { Text, View } from "react-native";
+import { profileStyles } from "../../styles/profileStyles";
+import AuthInput from "../auth/AuthInput";
+import BirthDateField from "./BirthDateField";
+import GenderSelector from "./GenderSelector";
+import ProfileButton from "./ProfileButton";
 
 type ProfileFormProps = {
     firstName: string;
@@ -41,10 +40,9 @@ export default function ProfileForm({
     onSubmit,
 }: ProfileFormProps) {
     return (
-        <View>
-            <Text style={authStyles.title}>
-                Completa tu perfil
-            </Text>
+        <View style={profileStyles.card}>
+            <Text style={profileStyles.eyebrow}>Primer acceso</Text>
+            <Text style={profileStyles.title}>Completa tu perfil</Text>
 
             <Text style={profileStyles.subtitle}>
                 Necesitamos algunos datos antes de que puedas continuar.

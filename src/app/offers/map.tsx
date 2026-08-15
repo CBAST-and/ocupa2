@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { View, Text, Pressable, ActivityIndicator, StyleSheet } from "react-native";
-import MapView, { Marker, Region } from "react-native-maps";
-import { router } from "expo-router";
 import { JobTypeFilter } from "@/components/offers/JobTypeFilter";
-import { getOffers, getJobTypes } from "@/services/offers";
+import { getJobTypes, getOffers } from "@/services/offers";
+import { colors, contractTypeColors, radius, spacing, type } from "@/styles/tokens";
 import { JobType, Offer } from "@/types/OfferType";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import MapView, { Marker, Region } from "react-native-maps";
 
-// Centro de Santo Domingo, usado cuando no hay ofertas con ubicación válida
 const DEFAULT_REGION: Region = {
   latitude: 18.4861,
   longitude: -69.9312,
@@ -14,7 +14,6 @@ const DEFAULT_REGION: Region = {
   longitudeDelta: 0.3,
 };
 
-// Descarta coordenadas de prueba inválidas (0,0) o claramente fuera de República Dominicana
 function hasValidLocation(offer: Offer) {
   const { lat, lng } = offer.location;
   if (lat === 0 && lng === 0) return false;
@@ -55,20 +54,22 @@ export default function OffersMap() {
 
   return (
     <View style={styles.container}>
-      <JobTypeFilter
-        jobTypes={jobTypes}
-        selectedKey={selectedJobTypeKey}
-        onSelect={setSelectedJobTypeKey}
-      />
+      <View style={styles.filterBar}>
+        <JobTypeFilter
+          jobTypes={jobTypes}
+          selectedKey={selectedJobTypeKey}
+          onSelect={setSelectedJobTypeKey}
+        />
+      </View>
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" />
-          <Text>Cargando ofertas...</Text>
+          <ActivityIndicator size="large" color={colors.green} />
+          <Text style={styles.centerText}>Cargando ofertas...</Text>
         </View>
       ) : error ? (
         <View style={styles.center}>
-          <Text>{error}</Text>
+          <Text style={styles.centerText}>{error}</Text>
         </View>
       ) : (
         <>
@@ -82,15 +83,18 @@ export default function OffersMap() {
                 }}
                 title={offer.jobTypeName}
                 description={offer.description}
+                pinColor={contractTypeColors[offer.contractType]?.solid ?? colors.ink}
                 onCalloutPress={() => router.push(`/offers/${offer.id}`)}
               />
             ))}
           </MapView>
 
           {skippedCount > 0 && (
-            <Text style={styles.notice}>
-              {skippedCount} oferta(s) sin ubicación válida no se muestran en el mapa.
-            </Text>
+            <View style={styles.notice}>
+              <Text style={styles.noticeText}>
+                {skippedCount} oferta(s) sin ubicación válida no se muestran en el mapa.
+              </Text>
+            </View>
           )}
         </>
       )}
@@ -105,7 +109,13 @@ export default function OffersMap() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: colors.paper,
+  },
+
+  filterBar: {
+    backgroundColor: colors.paper,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.hairline,
   },
 
   map: {
@@ -116,30 +126,45 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
+    gap: spacing.md,
+  },
+
+  centerText: {
+    ...type.body,
+    color: colors.inkMuted,
   },
 
   notice: {
-    fontSize: 12,
-    color: "#888",
+    backgroundColor: colors.card,
+    borderTopWidth: 1,
+    borderTopColor: colors.hairline,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+  },
+
+  noticeText: {
+    ...type.caption,
     textAlign: "center",
-    paddingVertical: 8,
-    backgroundColor: "#eee",
   },
 
   backButton: {
     position: "absolute",
-    bottom: 20,
+    bottom: spacing.xl,
     alignSelf: "center",
-    backgroundColor: "rgb(53, 107, 255)",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 24,
+    backgroundColor: colors.ink,
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.md,
+    borderRadius: radius.pill,
     elevation: 4,
+    shadowColor: colors.ink,
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
 
   backButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: colors.paper,
+    fontWeight: "700",
+    letterSpacing: 0.3,
   },
 });

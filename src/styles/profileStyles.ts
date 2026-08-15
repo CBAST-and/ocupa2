@@ -1,79 +1,110 @@
 import { StyleSheet } from "react-native";
+import { colors, radius, spacing, type } from "./tokens";
 
 export const profileStyles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: colors.paper,
+        padding: spacing.xl,
+        justifyContent: "center",
+    },
+
+    card: {
+        backgroundColor: colors.card,
+        borderRadius: radius.lg,
+        borderWidth: 1,
+        borderColor: colors.hairline,
+        padding: spacing.xl,
+    },
+
+    eyebrow: {
+        ...type.eyebrow,
+        color: colors.green,
+        marginBottom: spacing.xs,
+    },
+
+    title: {
+        ...type.display,
+        marginBottom: spacing.sm,
+    },
+
     subtitle: {
-        fontSize: 15,
-        color: "#555",
-        marginBottom: 20,
+        ...type.body,
+        color: colors.inkMuted,
+        marginBottom: spacing.xl,
     },
 
     fieldLabel: {
-        fontSize: 13,
-        fontWeight: "600",
-        marginBottom: 6,
-        color: "#333",
+        ...type.label,
+        marginBottom: spacing.sm,
+        marginTop: spacing.md,
     },
 
     errorText: {
-        color: "#c0392b",
+        color: colors.clay,
         fontSize: 13,
-        marginTop: -8,
-        marginBottom: 12,
+        fontWeight: "600",
+        marginTop: spacing.xs,
+        marginBottom: spacing.sm,
     },
 
     dateField: {
         borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 12,
+        borderColor: colors.hairline,
+        borderRadius: radius.md,
+        padding: spacing.md,
+        backgroundColor: colors.paper,
+        marginBottom: spacing.lg,
     },
 
     dateFieldText: {
-        fontSize: 16,
+        fontSize: 15,
+        color: colors.ink,
     },
 
     dateFieldPlaceholder: {
-        fontSize: 16,
-        color: "#999",
+        fontSize: 15,
+        color: colors.inkMuted,
     },
 
     genderRow: {
         flexDirection: "row",
-        marginBottom: 12,
-        gap: 8,
+        gap: spacing.sm,
+        marginBottom: spacing.sm,
     },
 
     genderChip: {
         flex: 1,
         borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 8,
-        paddingVertical: 12,
+        borderColor: colors.hairline,
+        borderRadius: radius.md,
+        paddingVertical: spacing.md,
         alignItems: "center",
+        backgroundColor: colors.paper,
     },
 
     genderChipSelected: {
-        borderColor: "rgb(53, 107, 255)",
-        backgroundColor: "rgba(53, 107, 255, 0.1)",
+        borderColor: colors.green,
+        backgroundColor: colors.greenSoft,
     },
 
     genderChipText: {
         fontSize: 14,
-        color: "#333",
+        color: colors.ink,
+        fontWeight: "600",
     },
 
     genderChipTextSelected: {
-        color: "rgb(53, 107, 255)",
-        fontWeight: "bold",
+        color: colors.green,
+        fontWeight: "700",
     },
 
     button: {
-        padding: 14,
-        borderRadius: 8,
+        padding: spacing.md,
+        borderRadius: radius.md,
         alignItems: "center",
-        marginTop: 8,
-        backgroundColor: "rgb(53, 107, 255)",
+        marginTop: spacing.lg,
+        backgroundColor: colors.green,
     },
 
     buttonDisabled: {
@@ -81,7 +112,8 @@ export const profileStyles = StyleSheet.create({
     },
 
     buttonText: {
-        color: "#fff",
-        fontWeight: "bold",
+        color: colors.white,
+        fontWeight: "700",
+        fontSize: 15,
     },
 });

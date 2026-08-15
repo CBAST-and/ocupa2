@@ -1,21 +1,17 @@
-import { useState } from "react";
-import { Alert, View } from "react-native";
 import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, View } from "react-native";
 
 import ProfileForm from "@/components/profile/ProfileForm";
-import { updateProfile } from "@/services/profile";
+import { getMyAccount, updateProfile } from "@/services/profile";
+import { profileStyles } from "@/styles/profileStyles";
+import { colors } from "@/styles/tokens";
 import { Gender } from "@/types/ProfileType";
-import { authStyles } from "@/styles/authStyles";
-
-// Convierte un Date a "YYYY-MM-DD" en hora local (evita el corrimiento de día de toISOString)
-function toApiDateString(date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-}
+import { toApiDateString } from "@/utils/date";
 
 export default function Setup() {
+    const [checking, setChecking] = useState(true);
+
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [cedula, setCedula] = useState("");
@@ -24,6 +20,29 @@ export default function Setup() {
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        getMyAccount()
+            .then((account) => {
+                if (cancelled) return;
+
+                if (account.profileCompleted) {
+                    router.replace("/");
+                } else {
+                    setChecking(false);
+                }
+            })
+            .catch((err) => {
+                console.error("Error verificando el estado del perfil:", err);
+                if (!cancelled) setChecking(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const validate = (): string | null => {
         if (!cedula.trim()) return "La cédula es obligatoria.";
@@ -67,8 +86,16 @@ export default function Setup() {
         }
     };
 
+    if (checking) {
+        return (
+            <View style={[profileStyles.screen, { alignItems: "center" }]}>
+                <ActivityIndicator size="large" color={colors.green} />
+            </View>
+        );
+    }
+
     return (
-        <View style={authStyles.container}>
+        <View style={profileStyles.screen}>
             <ProfileForm
                 firstName={firstName}
                 lastName={lastName}

@@ -43,3 +43,36 @@ export async function updateProfile(
 
   return data.data;
 }
+
+// Obtiene los datos de la cuenta autenticada, incluyendo el estado real de profileCompleted (GET /me)
+export async function getMyAccount(): Promise<{ profileCompleted: boolean } & Record<string, unknown>> {
+  const token = await getToken();
+
+  if (!token) {
+    throw new Error("No se encontró una sesión activa. Inicia sesión nuevamente.");
+  }
+
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_URL}/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Revisa tu conexión.");
+  }
+
+  const data = await response.json();
+
+  if (response.status === 401) {
+    throw new Error("Tu sesión expiró. Inicia sesión nuevamente.");
+  }
+
+  if (!response.ok || !data.ok) {
+    throw new Error(data.message || "No se pudo cargar la cuenta.");
+  }
+
+  return data.data;
+}

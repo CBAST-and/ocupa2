@@ -1,12 +1,7 @@
-import { View, Text, Image, Pressable, StyleSheet } from "react-native";
-import { router } from "expo-router";
+import { colors, contractTypeColors, radius, spacing, type } from "@/styles/tokens";
 import { Offer } from "@/types/OfferType";
-
-const CONTRACT_TYPE_LABELS: Record<string, string> = {
-  temporal: "Temporal",
-  fijo: "Fijo",
-  horas: "Por horas",
-};
+import { router } from "expo-router";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 const PERIOD_LABELS: Record<string, string> = {
   mensual: "/ mes",
@@ -14,32 +9,48 @@ const PERIOD_LABELS: Record<string, string> = {
   total: "total",
 };
 
-// Algunas ofertas de prueba tienen paths locales de Android o base64 inválido en "photo"
 function isValidPhotoUrl(photo: string) {
   return photo.startsWith("http://") || photo.startsWith("https://");
 }
 
+const HOLE_COUNT = 10;
+
 export function OfferCard({ offer }: { offer: Offer }) {
   const periodLabel = PERIOD_LABELS[offer.payment.period] ?? offer.payment.period;
+  const contract = contractTypeColors[offer.contractType] ?? {
+    solid: colors.inkMuted,
+    soft: colors.hairline,
+    label: offer.contractType,
+  };
 
   return (
-    <Pressable
-      style={styles.card}
-      onPress={() => router.push(`/offers/${offer.id}`)}>
-      {isValidPhotoUrl(offer.photo) ? (
-        <Image source={{ uri: offer.photo }} style={styles.image} />
-      ) : (
-        <View style={[styles.image, styles.imagePlaceholder]}>
-          <Text style={styles.imagePlaceholderText}>Sin imagen</Text>
+    <Pressable style={styles.card} onPress={() => router.push(`/offers/${offer.id}`)}>
+      <View style={[styles.topBar, { backgroundColor: contract.solid }]} />
+
+      <View style={styles.imageWrapper}>
+        {isValidPhotoUrl(offer.photo) ? (
+          <Image source={{ uri: offer.photo }} style={styles.image} />
+        ) : (
+          <View style={[styles.image, styles.imagePlaceholder]}>
+            <Text style={styles.imagePlaceholderText}>Sin imagen</Text>
+          </View>
+        )}
+
+        <View style={styles.perforationRow}>
+          {Array.from({ length: HOLE_COUNT }).map((_, index) => (
+            <View key={index} style={styles.hole} />
+          ))}
         </View>
-      )}
+      </View>
 
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <Text style={styles.jobType}>{offer.jobTypeName}</Text>
-          <Text style={styles.contractType}>
-            {CONTRACT_TYPE_LABELS[offer.contractType] ?? offer.contractType}
-          </Text>
+          <View style={[styles.contractPill, { backgroundColor: contract.soft }]}>
+            <Text style={[styles.contractPillText, { color: contract.solid }]}>
+              {contract.label}
+            </Text>
+          </View>
         </View>
 
         <Text style={styles.description} numberOfLines={2}>
@@ -52,7 +63,8 @@ export function OfferCard({ offer }: { offer: Offer }) {
 
         <View style={styles.footerRow}>
           <Text style={styles.payment}>
-            {offer.payment.amount} {offer.payment.currency} {periodLabel}
+            {offer.payment.amount} {offer.payment.currency}
+            <Text style={styles.paymentPeriod}> {periodLabel}</Text>
           </Text>
 
           <Text style={styles.likes}>♥ {offer.likesCount}</Text>
@@ -64,78 +76,117 @@ export function OfferCard({ offer }: { offer: Offer }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "white",
-    borderRadius: 12,
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
     overflow: "hidden",
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.hairline,
+  },
+
+  topBar: {
+    height: 5,
+  },
+
+  imageWrapper: {
+    position: "relative",
   },
 
   image: {
     width: "100%",
-    height: 160,
+    height: 150,
     resizeMode: "cover",
   },
 
   imagePlaceholder: {
-    backgroundColor: "#e0e0e0",
+    backgroundColor: colors.hairline,
     justifyContent: "center",
     alignItems: "center",
   },
 
   imagePlaceholderText: {
-    color: "#888",
-    fontSize: 13,
+    ...type.caption,
+  },
+
+  perforationRow: {
+    position: "absolute",
+    bottom: -6,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+
+  hole: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: colors.paper,
   },
 
   content: {
-    padding: 16,
+    padding: spacing.lg,
+    paddingTop: spacing.xl,
   },
 
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 6,
+    alignItems: "flex-start",
+    marginBottom: spacing.sm,
+    gap: spacing.sm,
   },
 
   jobType: {
-    fontSize: 17,
-    fontWeight: "bold",
+    ...type.h2,
+    flexShrink: 1,
   },
 
-  contractType: {
-    fontSize: 12,
-    color: "rgb(53, 107, 255)",
-    fontWeight: "600",
+  contractPill: {
+    borderRadius: radius.pill,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+
+  contractPillText: {
+    fontSize: 11,
+    fontWeight: "700",
     textTransform: "uppercase",
+    letterSpacing: 0.4,
   },
 
   description: {
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 8,
+    ...type.body,
+    color: colors.inkMuted,
+    marginBottom: spacing.sm,
   },
 
   address: {
-    fontSize: 13,
-    color: "#888",
-    marginBottom: 10,
+    ...type.caption,
+    marginBottom: spacing.md,
   },
 
   footerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: colors.hairline,
+    paddingTop: spacing.md,
   },
 
   payment: {
-    fontSize: 15,
-    fontWeight: "bold",
-    color: "#222",
+    fontSize: 17,
+    fontWeight: "800",
+    color: colors.ink,
+  },
+
+  paymentPeriod: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: colors.inkMuted,
   },
 
   likes: {
-    fontSize: 13,
-    color: "#888",
+    ...type.caption,
   },
 });
