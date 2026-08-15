@@ -18,7 +18,12 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.harddevs.ocupa2"
+      "package": "com.harddevs.ocupa2",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD8m7xQKQExKBfuxehtjReBY19uLjnt_vQ"
+        }
+      }
     },
     "web": {
       "output": "static",
