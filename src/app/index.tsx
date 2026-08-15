@@ -1,13 +1,14 @@
+import { getToken } from "@/services/auth";
 import { router } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
-  View,
-  Text,
-  Image,
   Animated,
   Dimensions,
-  StyleSheet,
+  Image,
   Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -69,6 +70,14 @@ export default function ImageSlider() {
           <Text style={styles.loginText}>NOTICIAS</Text>
         </Pressable>
       </View>
+      <Pressable
+        style={styles.offersButton}
+        onPress={async () => {
+          const token = await getToken();
+          router.push(token ? "/offers" : "/login");
+        }}>
+        <Text style={styles.loginText}>EXPLORAR OFERTAS</Text>
+      </Pressable>
     </View>
   );
 }
@@ -138,5 +147,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "white",
     fontWeight: "bold",
+  },
+
+  offersButton: {
+    borderRadius: 20,
+    borderWidth: 2,
+    backgroundColor: "rgb(53, 107, 255)",
+    borderColor: "rgb(87, 102, 190)",
+    marginHorizontal: 20,
+    marginBottom: 20,
+    padding: 16,
+    alignItems: "center",
   },
 });
