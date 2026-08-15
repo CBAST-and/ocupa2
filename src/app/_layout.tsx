@@ -8,6 +8,15 @@ export default function RootLayout() {
       <Stack.Screen name="setup" options={{title: "Termina tu cuenta"}}/>
       <Stack.Screen name="videos" options={{title: "Videos promocionales"}}/>
       <Stack.Screen name="news" options={{title: "Noticias laborales"}}/>
+
+      <Stack.Screen name="about" options={{ title: "Acerca de" }}/>
+
+      <Stack.Screen name="change-password" options={{ title: "Cambiar contraseña" }}/>
+
+      <Stack.Screen name="profile" options={{ title: "Mi perfil" }}/>
+
     </Stack>
+    
   );
 }
+

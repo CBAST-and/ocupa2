@@ -1,12 +1,12 @@
+import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, View } from "react-native";
-import { router } from "expo-router";
 
+import ForgotPasswordForm from "../components/auth/ForgotPasswordForm";
 import LoginForm from "../components/auth/LoginForm";
 import RegisterForm from "../components/auth/RegisterForm";
-import ForgotPasswordForm from "../components/auth/ForgotPasswordForm";
 
-import { login, register, forgotPassword, saveToken } from "../services/auth";
+import { forgotPassword, login, register, saveToken } from "../services/auth";
 
 import { authStyles } from "../styles/authStyles";
 
@@ -61,7 +61,14 @@ export default function Index() {
 
       console.log(response);
     } catch (error) {
-      console.error(error);
+      console.error("ERROR REGISTRO:", error);
+    
+      Alert.alert(
+        "Error al registrarse",
+        error instanceof Error
+          ? error.message
+          : "Ocurrió un error desconocido al registrarse.",
+      );
     }
   };
 

@@ -1,13 +1,13 @@
 import { router } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
-  View,
-  Text,
-  Image,
   Animated,
   Dimensions,
-  StyleSheet,
+  Image,
   Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -68,6 +68,29 @@ export default function ImageSlider() {
         <Pressable style={styles.button} onPress={() => router.push("/news")}>
           <Text style={styles.loginText}>NOTICIAS</Text>
         </Pressable>
+
+
+
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/about")}>
+        <Text style={styles.loginText}>ACERCA DE</Text>
+        </Pressable>
+
+
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/change-password")}>
+        <Text style={styles.loginText}>CAMBIAR CONTRASEÑA</Text>
+        </Pressable>
+
+
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/profile")}>
+        <Text style={styles.loginText}>MI PERFIL</Text>
+        </Pressable>
+
       </View>
     </View>
   );

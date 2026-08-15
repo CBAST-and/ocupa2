@@ -1,7 +1,7 @@
 import { API_URL } from "@/config/api";
 import * as SecureStore from "expo-secure-store";
 
-// Funciones de pagina de index
+// REGISTRO
 export async function register(
   email: string,
   firstName: string,
@@ -25,13 +25,22 @@ export async function register(
 
   const data = await response.json();
 
+  console.log("STATUS REGISTRO:", response.status);
+  console.log("RESPUESTA REGISTRO:", data);
+
   if (!response.ok) {
-    throw new Error(data.message || "Error al registrarse");
+    throw new Error(
+      data?.message ||
+        data?.error ||
+        JSON.stringify(data) ||
+        "Error al registrarse",
+    );
   }
 
   return data;
 }
 
+// LOGIN
 export async function login(email: string, password: string) {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -45,16 +54,27 @@ export async function login(email: string, password: string) {
   });
 
   const data = await response.json();
-  console.log(data);
+
+  console.log("STATUS LOGIN:", response.status);
+  console.log("RESPUESTA LOGIN:", data);
 
   if (!response.ok) {
-    throw new Error(`Error al iniciar sesión: ${data?.message}`);
+    throw new Error(
+      data?.message ||
+        data?.error ||
+        JSON.stringify(data) ||
+        "Error al iniciar sesión",
+    );
   }
 
   return data;
 }
 
-export async function forgotPassword(email: string, referralMatricula: string) {
+// RECUPERAR CONTRASEÑA
+export async function forgotPassword(
+  email: string,
+  referralMatricula: string,
+) {
   const response = await fetch(`${API_URL}/auth/forgot-password`, {
     method: "POST",
     headers: {
@@ -68,14 +88,22 @@ export async function forgotPassword(email: string, referralMatricula: string) {
 
   const data = await response.json();
 
+  console.log("STATUS RECUPERAR:", response.status);
+  console.log("RESPUESTA RECUPERAR:", data);
+
   if (!response.ok) {
-    throw new Error(data.message || "Error al recuperar la contraseña");
+    throw new Error(
+      data?.message ||
+        data?.error ||
+        JSON.stringify(data) ||
+        "Error al recuperar la contraseña",
+    );
   }
 
   return data;
 }
 
-//funciones de manejo de token
+// MANEJO DEL TOKEN
 const TOKEN_KEY = "bearer_token";
 
 export async function saveToken(token: string) {
