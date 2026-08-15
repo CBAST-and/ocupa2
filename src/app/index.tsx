@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     backgroundColor: "rgb(53, 107, 255)",
     borderColor: "rgb(87, 102, 190)",
-    margin: 20,
+    margin: 5,
     padding: 20,
     width: 150,
     alignItems: "center",
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
 
   loginText: {
-    fontSize: 20,
+    fontSize: 12,
     color: "white",
     fontWeight: "bold",
   },
