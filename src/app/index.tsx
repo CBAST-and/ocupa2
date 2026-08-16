@@ -22,7 +22,7 @@ const images = [
 export default function ImageSlider() {
   const translateX = useRef(new Animated.Value(0)).current;
 
-  // Efecto infinito de imagenes
+  // Efecto infinito de imágenes
   const duplicatedImages = [...images, ...images];
 
   useEffect(() => {
@@ -46,51 +46,55 @@ export default function ImageSlider() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>OCUPA2</Text>
+
       <Text style={styles.text}>Encuentra empleos</Text>
+
       <Animated.View
         style={[
           styles.imageContainer,
           {
             transform: [{ translateX }],
           },
-        ]}>
+        ]}
+      >
         {duplicatedImages.map((image, index) => (
-          <Image key={index} source={image} style={styles.image} />
+          <Image
+            key={index}
+            source={image}
+            style={styles.image}
+            resizeMode="cover"
+          />
         ))}
       </Animated.View>
-      <View style={styles.sideContainer}>
-        <Pressable style={styles.button} onPress={() => router.push("/videos")}>
-          <Text style={styles.loginText}>VIDEOS</Text>
-        </Pressable>
-        <Pressable style={styles.login} onPress={() => router.push("/login")}>
-          <Text style={styles.loginText}>LOGIN</Text>
-        </Pressable>
-        <Pressable style={styles.button} onPress={() => router.push("/news")}>
-          <Text style={styles.loginText}>NOTICIAS</Text>
+
+      <View style={styles.menuContainer}>
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/videos")}
+        >
+          <Text style={styles.buttonText}>VIDEOS</Text>
         </Pressable>
 
-
+        <Pressable
+          style={styles.loginButton}
+          onPress={() => router.push("/login")}
+        >
+          <Text style={styles.buttonText}>LOGIN</Text>
+        </Pressable>
 
         <Pressable
           style={styles.button}
-          onPress={() => router.push("/about")}>
-        <Text style={styles.loginText}>ACERCA DE</Text>
+          onPress={() => router.push("/news")}
+        >
+          <Text style={styles.buttonText}>NOTICIAS</Text>
         </Pressable>
-
 
         <Pressable
           style={styles.button}
-          onPress={() => router.push("/change-password")}>
-        <Text style={styles.loginText}>CAMBIAR CONTRASEÑA</Text>
+          onPress={() => router.push("/profile")}
+        >
+          <Text style={styles.buttonText}>MI PERFIL</Text>
         </Pressable>
-
-
-        <Pressable
-          style={styles.button}
-          onPress={() => router.push("/profile")}>
-        <Text style={styles.loginText}>MI PERFIL</Text>
-        </Pressable>
-
       </View>
     </View>
   );
@@ -100,22 +104,16 @@ const styles = StyleSheet.create({
   container: {
     width,
     overflow: "hidden",
+    backgroundColor: "#f5f5f5",
   },
 
   imageContainer: {
     flexDirection: "row",
   },
 
-  sideContainer: {
-    width: "100%",
-    flexDirection: "row",
-    alignContent: "space-between",
-  },
-
   image: {
     width,
     height: 220,
-    resizeMode: "cover",
   },
 
   title: {
@@ -123,43 +121,51 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     fontSize: 40,
     fontWeight: "bold",
+    color: "#17202A",
   },
 
   text: {
     fontSize: 18,
     textAlign: "center",
     paddingBottom: 20,
+    color: "#475467",
   },
 
-  login: {
-    borderRadius: 20,
-    borderWidth: 2,
-    backgroundColor: "rgb(53, 255, 131)",
-    borderColor: "rgb(87, 190, 127)",
-    margin: 20,
-    padding: 20,
-    width: 150,
-    alignItems: "center",
-    alignSelf: "center",
-    flex: 1
+  menuContainer: {
+    width: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
 
   button: {
-    borderRadius: 20,
-    borderWidth: 2,
-    backgroundColor: "rgb(53, 107, 255)",
-    borderColor: "rgb(87, 102, 190)",
-    margin: 5,
-    padding: 20,
-    width: 150,
+    width: "47%",
+    backgroundColor: "#356BFF",
+    paddingVertical: 16,
+    borderRadius: 12,
     alignItems: "center",
-    alignSelf: "center",
-    flex: 1
+    justifyContent: "center",
+    minHeight: 55,
   },
 
-  loginText: {
-    fontSize: 12,
-    color: "white",
+  loginButton: {
+    width: "47%",
+    backgroundColor: "#35C875",
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 55,
+  },
+
+  buttonText: {
+    fontSize: 14,
+    color: "#ffffff",
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
