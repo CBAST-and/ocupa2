@@ -1,12 +1,12 @@
 import {
-    Alert,
-    Image,
-    Linking,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Alert,
+  Image,
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
   
   type TeamMember = {
@@ -34,17 +34,17 @@ import {
         photo: require("@/assets/images/team/integrante2.jpg"),
       },
       {
-        name: "Integrante 3",
-        matricula: "PENDIENTE",
-        phone: "PENDIENTE",
-        telegram: "PENDIENTE",
+        name: "Diego Alejandro Mieses Castillo",
+        matricula: "2024-0069",
+        phone: "8096074555",
+        telegram: "t.me/SpecterDiego",
         photo: require("@/assets/images/team/integrante3.jpg"),
       },
       {
-        name: "Integrante 4",
-        matricula: "PENDIENTE",
-        phone: "PENDIENTE",
-        telegram: "PENDIENTE",
+        name: "Sebastian Pilier Mercedes",
+        matricula: "2024-0132",
+        phone: "8496540946",
+        telegram: "N/A",
         photo: require("@/assets/images/team/integrante4.jpg"),
       },
     ];

@@ -1,6 +1,12 @@
 import { getToken } from "@/services/auth";
 import { router, useFocusEffect } from "expo-router";
-import { useEffect, useRef, useState, useCallback} from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
 import {
   Animated,
   Dimensions,
@@ -23,18 +29,25 @@ const images = [
 export default function ImageSlider() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const translateX = useRef(new Animated.Value(0)).current;
+  const translateX = useRef(
+    new Animated.Value(0)
+  ).current;
 
-  // Efecto infinito de imagenes
-  const duplicatedImages = [...images, ...images];
+  const duplicatedImages = [
+    ...images,
+    ...images,
+  ];
 
+  // Slider infinito
   useEffect(() => {
     const imageWidth = width;
 
     const animation = Animated.loop(
       Animated.timing(translateX, {
-        toValue: -imageWidth * images.length,
-        duration: images.length * 6000,
+        toValue:
+          -imageWidth * images.length,
+        duration:
+          images.length * 6000,
         useNativeDriver: true,
       }),
     );
@@ -46,74 +59,147 @@ export default function ImageSlider() {
     };
   }, []);
 
+  // Verifica si existe una sesión cada vez
+  // que el usuario vuelve al Inicio
   useFocusEffect(
     useCallback(() => {
       const checkToken = async () => {
-        const token = await getToken();
+        const token =
+          await getToken();
+
         setIsLoggedIn(!!token);
       };
 
       checkToken();
-    }, [])
+    }, []),
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>OCUPA2</Text>
-      <Text style={styles.text}>Encuentra empleos</Text>
+      <Text style={styles.title}>
+        OCUPA2
+      </Text>
+
+      <Text style={styles.text}>
+        Encuentra empleos
+      </Text>
+
       <Animated.View
         style={[
           styles.imageContainer,
           {
-            transform: [{ translateX }],
+            transform: [
+              { translateX },
+            ],
           },
-        ]}>
-        {duplicatedImages.map((image, index) => (
-          <Image key={index} source={image} style={styles.image} />
-        ))}
+        ]}
+      >
+        {duplicatedImages.map(
+          (image, index) => (
+            <Image
+              key={index}
+              source={image}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          ),
+        )}
       </Animated.View>
-      <View style={styles.sideContainer}>
-        <Pressable style={styles.button} onPress={() => router.push("/videos")}>
-          <Text style={styles.loginText}>VIDEOS</Text>
+
+      <View
+        style={styles.menuContainer}
+      >
+        {/* VIDEOS */}
+
+        <Pressable
+          style={styles.button}
+          onPress={() =>
+            router.push("/videos")
+          }
+        >
+          <Text
+            style={styles.buttonText}
+          >
+            VIDEOS
+          </Text>
         </Pressable>
 
+        {/* LOGIN solamente si no hay sesión */}
+
         {!isLoggedIn && (
-          <Pressable style={styles.login} onPress={() => router.push("/login")}>
-            <Text style={styles.loginText}>LOGIN</Text>
+          <Pressable
+            style={
+              styles.loginButton
+            }
+            onPress={() =>
+              router.push("/login")
+            }
+          >
+            <Text
+              style={
+                styles.buttonText
+              }
+            >
+              LOGIN
+            </Text>
           </Pressable>
         )}
 
-        <Pressable style={styles.button} onPress={() => router.push("/news")}>
-          <Text style={styles.loginText}>NOTICIAS</Text>
+        {/* NOTICIAS */}
+
+        <Pressable
+          style={styles.button}
+          onPress={() =>
+            router.push("/news")
+          }
+        >
+          <Text
+            style={styles.buttonText}
+          >
+            NOTICIAS
+          </Text>
         </Pressable>
 
-        <Pressable style={styles.button} onPress={() => router.push("/about")}>
-          <Text style={styles.loginText}>ACERCA DE</Text>
-        </Pressable>
+        {/* MI PERFIL solo si inició sesión */}
 
         {isLoggedIn && (
-          <>
-            <Pressable
-              style={styles.button}
-              onPress={() => router.push("/change-password")}>
-              <Text style={styles.loginText}>CAMBIAR CONTRASEÑA</Text>
-            </Pressable>
-
-            <Pressable
-              style={styles.button}
-              onPress={() => router.push("/profile")}>
-              <Text style={styles.loginText}>MI PERFIL</Text>
-            </Pressable>
-          </>
+          <Pressable
+            style={styles.button}
+            onPress={() =>
+              router.push("/profile")
+            }
+          >
+            <Text
+              style={
+                styles.buttonText
+              }
+            >
+              MI PERFIL
+            </Text>
+          </Pressable>
         )}
       </View>
+
+      {/* EXPLORAR OFERTAS */}
+
       <Pressable
         style={styles.offersButton}
         onPress={async () => {
-          const token = await getToken();
-          router.push(token ? "/offers" : "/login");
-        }}>
-        <Text style={styles.loginText}>EXPLORAR OFERTAS</Text>
+          const token =
+            await getToken();
+
+          router.push(
+            token
+              ? "/offers"
+              : "/login",
+          );
+        }}
+      >
+        <Text
+          style={styles.buttonText}
+        >
+          EXPLORAR OFERTAS
+        </Text>
       </Pressable>
     </View>
   );
@@ -123,23 +209,16 @@ const styles = StyleSheet.create({
   container: {
     width,
     overflow: "hidden",
+    backgroundColor: "#f5f5f5",
   },
 
   imageContainer: {
     flexDirection: "row",
   },
 
-  sideContainer: {
-    width: "100%",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-  },
-
   image: {
     width,
     height: 220,
-    resizeMode: "cover",
   },
 
   title: {
@@ -147,52 +226,62 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     fontSize: 40,
     fontWeight: "bold",
+    color: "#17202A",
   },
 
   text: {
     fontSize: 18,
     textAlign: "center",
     paddingBottom: 20,
+    color: "#475467",
   },
 
-  login: {
-    width: "30%",
-    aspectRatio: 1,
-    borderRadius: 20,
-    borderWidth: 2,
-    backgroundColor: "rgb(53, 255, 131)",
-    borderColor: "rgb(87, 190, 127)",
-    margin: "1.5%",
-    alignItems: "center",
+  menuContainer: {
+    width: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "center",
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 12,
   },
 
   button: {
-    width: "30%",
-    aspectRatio: 1,
-    borderRadius: 20,
-    borderWidth: 2,
-    backgroundColor: "rgb(53, 107, 255)",
-    borderColor: "rgb(87, 102, 190)",
-    margin: "1.5%",
+    width: "47%",
+    backgroundColor: "#356BFF",
+    paddingVertical: 16,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+    minHeight: 55,
   },
 
-  loginText: {
-    fontSize: 12,
-    color: "white",
-    fontWeight: "bold",
+  loginButton: {
+    width: "47%",
+    backgroundColor: "#35C875",
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 55,
   },
 
   offersButton: {
-    borderRadius: 20,
-    borderWidth: 2,
-    backgroundColor: "rgb(53, 107, 255)",
-    borderColor: "rgb(87, 102, 190)",
+    backgroundColor: "#356BFF",
     marginHorizontal: 20,
     marginBottom: 20,
-    padding: 16,
+    paddingVertical: 16,
+    borderRadius: 12,
     alignItems: "center",
+    justifyContent: "center",
+    minHeight: 55,
+  },
+
+  buttonText: {
+    fontSize: 14,
+    color: "#ffffff",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
