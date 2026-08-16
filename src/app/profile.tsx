@@ -13,8 +13,6 @@ import {
   View,
 } from "react-native";
 
-import { router } from "expo-router";
-
 import * as ImagePicker from "expo-image-picker";
 
 import {
@@ -24,8 +22,6 @@ import {
   getJobTypes,
   uploadCertificate,
 } from "@/services/experiences";
-
-import { deleteToken } from "@/services/auth";
 
 export default function Profile() {
   const [loading, setLoading] = useState(true);
@@ -55,20 +51,11 @@ export default function Profile() {
   useEffect(() => {
     loadData();
   }, []);
-<<<<<<< HEAD
-  
-  const handleLogout = async () => {
-    await deleteToken();
-    router.replace("/");
-  };
-  
-=======
 
   // ==============================
   // CARGAR EXPERIENCIAS Y TIPOS
   // ==============================
 
->>>>>>> feature/brandy-perfil
   const loadData = async () => {
     try {
       setLoading(true);
@@ -742,19 +729,6 @@ export default function Profile() {
                 {experience.title ??
                   "Experiencia"}
               </Text>
-<<<<<<< HEAD
-            </Pressable>
-          )}
-        </View>
-      ))}
-
-      <Pressable
-        style={styles.logoutButton}
-        onPress={handleLogout}
-      >
-        <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
-      </Pressable>
-=======
 
               <Text
                 style={
@@ -838,7 +812,6 @@ export default function Profile() {
           );
         },
       )}
->>>>>>> feature/brandy-perfil
     </ScrollView>
   );
 }
@@ -1149,19 +1122,5 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "bold",
     fontSize: 14,
-  },
-
-  logoutButton: {
-    backgroundColor: "#D92D20",
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 20,
-  },
-
-  logoutButtonText: {
-    color: "#ffffff",
-    fontWeight: "bold",
-    fontSize: 16,
   },
 });
