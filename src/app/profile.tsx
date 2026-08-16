@@ -1,14 +1,16 @@
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
+
 import {
-    ActivityIndicator,
-    Alert,
-    Image,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 import { router } from "expo-router";
@@ -27,8 +29,10 @@ import { deleteToken } from "@/services/auth";
 
 export default function Profile() {
   const [loading, setLoading] = useState(true);
+
   const [experiences, setExperiences] = useState<any[]>([]);
   const [jobTypes, setJobTypes] = useState<any[]>([]);
+
   const [error, setError] = useState<string | null>(null);
 
   const [showForm, setShowForm] = useState(false);
@@ -37,21 +41,34 @@ export default function Profile() {
   const [description, setDescription] = useState("");
   const [jobTypeKey, setJobTypeKey] = useState("");
 
-  const [certificateUri, setCertificateUri] = useState<string | null>(null);
-  const [certificateBase64, setCertificateBase64] = useState<string | null>(null);
-  const [certificateName, setCertificateName] = useState<string>("certificado.jpg");
+  const [certificateUri, setCertificateUri] =
+    useState<string | null>(null);
+
+  const [certificateBase64, setCertificateBase64] =
+    useState<string | null>(null);
+
+  const [certificateName, setCertificateName] =
+    useState("certificado.jpg");
 
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     loadData();
   }, []);
+<<<<<<< HEAD
   
   const handleLogout = async () => {
     await deleteToken();
     router.replace("/");
   };
   
+=======
+
+  // ==============================
+  // CARGAR EXPERIENCIAS Y TIPOS
+  // ==============================
+
+>>>>>>> feature/brandy-perfil
   const loadData = async () => {
     try {
       setLoading(true);
@@ -84,12 +101,16 @@ export default function Profile() {
       setError(
         error instanceof Error
           ? error.message
-          : "No se pudieron cargar los datos."
+          : "No se pudieron cargar los datos.",
       );
     } finally {
       setLoading(false);
     }
   };
+
+  // ==============================
+  // SELECCIONAR CERTIFICADO
+  // ==============================
 
   const selectCertificate = async () => {
     try {
@@ -99,17 +120,19 @@ export default function Profile() {
       if (!permission.granted) {
         Alert.alert(
           "Permiso requerido",
-          "Necesitamos permiso para acceder a tus imágenes."
+          "Necesitamos permiso para acceder a tus imágenes.",
         );
+
         return;
       }
 
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsEditing: false,
-        quality: 0.8,
-        base64: true,
-      });
+      const result =
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ["images"],
+          allowsEditing: false,
+          quality: 0.8,
+          base64: true,
+        });
 
       if (result.canceled) {
         return;
@@ -117,10 +140,21 @@ export default function Profile() {
 
       const image = result.assets[0];
 
+      if (!image) {
+        Alert.alert(
+          "Error",
+          "No se pudo obtener la imagen seleccionada.",
+        );
+
+        return;
+      }
+
       setCertificateUri(image.uri);
 
       if (image.base64) {
         setCertificateBase64(image.base64);
+      } else {
+        setCertificateBase64(null);
       }
 
       if (image.fileName) {
@@ -129,52 +163,74 @@ export default function Profile() {
         setCertificateName("certificado.jpg");
       }
     } catch (error) {
-      console.error("ERROR SELECCIONANDO CERTIFICADO:", error);
+      console.error(
+        "ERROR SELECCIONANDO CERTIFICADO:",
+        error,
+      );
 
       Alert.alert(
         "Error",
-        "No se pudo seleccionar el certificado."
+        "No se pudo seleccionar el certificado.",
       );
     }
   };
 
+  // ==============================
+  // CREAR EXPERIENCIA
+  // ==============================
+
   const handleCreateExperience = async () => {
     if (!title.trim()) {
-      Alert.alert("Falta información", "Escribe un título.");
+      Alert.alert(
+        "Falta información",
+        "Escribe un título.",
+      );
+
       return;
     }
 
     if (!description.trim()) {
-      Alert.alert("Falta información", "Escribe una descripción.");
+      Alert.alert(
+        "Falta información",
+        "Escribe una descripción.",
+      );
+
       return;
     }
 
     if (!jobTypeKey) {
       Alert.alert(
         "Falta información",
-        "Selecciona un tipo de trabajo."
+        "Selecciona un tipo de trabajo.",
       );
+
       return;
     }
 
     if (!certificateBase64) {
       Alert.alert(
         "Falta certificado",
-        "Debes seleccionar una imagen del certificado."
+        "Debes seleccionar una imagen del certificado.",
       );
+
       return;
     }
 
     try {
       setSaving(true);
 
+      // Primero subimos la imagen
       const uploadedImage = await uploadCertificate(
         certificateBase64,
-        certificateName
+        certificateName,
       );
 
-      console.log("IMAGEN SUBIDA:", uploadedImage);
+      console.log(
+        "IMAGEN SUBIDA:",
+        uploadedImage,
+      );
 
+      // Preferimos la URL devuelta por la API
       const certificateUrl =
         uploadedImage?.url ??
         uploadedImage?.key ??
@@ -182,48 +238,50 @@ export default function Profile() {
 
       if (!certificateUrl) {
         throw new Error(
-          "El servidor no devolvió la dirección del certificado."
+          "El servidor no devolvió la dirección del certificado.",
         );
       }
 
+      // Luego guardamos la experiencia
       await createExperience(
         title.trim(),
         description.trim(),
         jobTypeKey,
-        certificateUrl
+        certificateUrl,
       );
 
       Alert.alert(
         "Experiencia guardada",
-        "La experiencia y el certificado fueron agregados correctamente."
+        "La experiencia y el certificado fueron agregados correctamente.",
       );
 
-      setTitle("");
-      setDescription("");
-      setJobTypeKey("");
-
-      setCertificateUri(null);
-      setCertificateBase64(null);
-      setCertificateName("certificado.jpg");
-
-      setShowForm(false);
+      resetForm();
 
       await loadData();
     } catch (error) {
-      console.error("ERROR CREANDO EXPERIENCIA:", error);
+      console.error(
+        "ERROR CREANDO EXPERIENCIA:",
+        error,
+      );
 
       Alert.alert(
         "Error",
         error instanceof Error
           ? error.message
-          : "No se pudo agregar la experiencia."
+          : "No se pudo agregar la experiencia.",
       );
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDeleteExperience = (id: string) => {
+  // ==============================
+  // ELIMINAR EXPERIENCIA
+  // ==============================
+
+  const handleDeleteExperience = (
+    id: string,
+  ) => {
     Alert.alert(
       "Eliminar experiencia",
       "¿Seguro que deseas eliminar esta experiencia?",
@@ -235,13 +293,14 @@ export default function Profile() {
         {
           text: "Eliminar",
           style: "destructive",
+
           onPress: async () => {
             try {
               await deleteExperience(id);
 
               Alert.alert(
                 "Experiencia eliminada",
-                "La experiencia fue eliminada correctamente."
+                "La experiencia fue eliminada correctamente.",
               );
 
               await loadData();
@@ -250,16 +309,20 @@ export default function Profile() {
                 "Error",
                 error instanceof Error
                   ? error.message
-                  : "No se pudo eliminar la experiencia."
+                  : "No se pudo eliminar la experiencia.",
               );
             }
           },
         },
-      ]
+      ],
     );
   };
 
-  const cancelForm = () => {
+  // ==============================
+  // LIMPIAR FORMULARIO
+  // ==============================
+
+  const resetForm = () => {
     setTitle("");
     setDescription("");
     setJobTypeKey("");
@@ -271,14 +334,64 @@ export default function Profile() {
     setShowForm(false);
   };
 
+  // ==============================
+  // VALIDAR IMAGEN DEL CERTIFICADO
+  // ==============================
+
+  const getValidCertificateUri = (
+    certificateImage: unknown,
+  ): string | null => {
+    if (
+      typeof certificateImage !== "string"
+    ) {
+      return null;
+    }
+
+    const uri = certificateImage.trim();
+
+    if (!uri) {
+      return null;
+    }
+
+    // Solo intentamos mostrar direcciones que
+    // React Native Image puede interpretar.
+    if (
+      uri.startsWith("http://") ||
+      uri.startsWith("https://") ||
+      uri.startsWith("data:") ||
+      uri.startsWith("file://") ||
+      uri.startsWith("content://")
+    ) {
+      return uri;
+    }
+
+    console.log(
+      "CERTIFICADO NO ES URL:",
+      uri,
+    );
+
+    return null;
+  };
+
+  // ==============================
+  // CARGANDO
+  // ==============================
+
   if (loading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" />
-        <Text>Cargando perfil...</Text>
+
+        <Text>
+          Cargando perfil...
+        </Text>
       </View>
     );
   }
+
+  // ==============================
+  // INTERFAZ
+  // ==============================
 
   return (
     <ScrollView
@@ -286,30 +399,86 @@ export default function Profile() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.title}>Mi perfil</Text>
+      <Text style={styles.title}>
+        Mi perfil
+      </Text>
 
-      <Text style={styles.subtitle}>Mis experiencias</Text>
+      {/* OPCIONES DE CUENTA */}
 
-      {error && <Text style={styles.error}>{error}</Text>}
+      <View style={styles.accountMenu}>
+        <Pressable
+          style={styles.accountButton}
+          onPress={() =>
+            router.push("/change-password")
+          }
+        >
+          <Text
+            style={
+              styles.accountButtonText
+            }
+          >
+            CAMBIAR CONTRASEÑA
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={styles.aboutButton}
+          onPress={() =>
+            router.push("/about")
+          }
+        >
+          <Text
+            style={
+              styles.accountButtonText
+            }
+          >
+            ACERCA DE
+          </Text>
+        </Pressable>
+      </View>
+
+      <Text style={styles.subtitle}>
+        Mis experiencias
+      </Text>
+
+      {error && (
+        <Text style={styles.error}>
+          {error}
+        </Text>
+      )}
+
+      {/* BOTÓN AGREGAR */}
 
       {!showForm && (
         <Pressable
           style={styles.addButton}
-          onPress={() => setShowForm(true)}
+          onPress={() =>
+            setShowForm(true)
+          }
         >
-          <Text style={styles.addButtonText}>
+          <Text
+            style={
+              styles.addButtonText
+            }
+          >
             + Agregar experiencia
           </Text>
         </Pressable>
       )}
 
+      {/* FORMULARIO */}
+
       {showForm && (
         <View style={styles.form}>
-          <Text style={styles.formTitle}>
+          <Text
+            style={styles.formTitle}
+          >
             Nueva experiencia
           </Text>
 
-          <Text style={styles.label}>Título</Text>
+          <Text style={styles.label}>
+            Título
+          </Text>
 
           <TextInput
             style={styles.input}
@@ -318,13 +487,20 @@ export default function Profile() {
             onChangeText={setTitle}
           />
 
-          <Text style={styles.label}>Descripción</Text>
+          <Text style={styles.label}>
+            Descripción
+          </Text>
 
           <TextInput
-            style={[styles.input, styles.textArea]}
+            style={[
+              styles.input,
+              styles.textArea,
+            ]}
             placeholder="Describe tu experiencia laboral"
             value={description}
-            onChangeText={setDescription}
+            onChangeText={
+              setDescription
+            }
             multiline
           />
 
@@ -333,168 +509,240 @@ export default function Profile() {
           </Text>
 
           {jobTypes.length === 0 ? (
-            <Text style={styles.warning}>
-              No se encontraron tipos de trabajo.
+            <Text
+              style={styles.warning}
+            >
+              No se encontraron tipos
+              de trabajo.
             </Text>
           ) : (
-            <View style={styles.jobTypes}>
-              {jobTypes.map((job, index) => {
-                const key =
-                  job.key ??
-                  job.jobTypeKey ??
-                  job.id ??
-                  job.value ??
-                  "";
+            <View
+              style={styles.jobTypes}
+            >
+              {jobTypes.map(
+                (job, index) => {
+                  const key =
+                    job.key ??
+                    job.jobTypeKey ??
+                    job.id ??
+                    job.value ??
+                    "";
 
-                const name =
-                  job.name ??
-                  job.label ??
-                  job.title ??
-                  key;
+                  const name =
+                    job.name ??
+                    job.label ??
+                    job.title ??
+                    key;
 
-                const selected = jobTypeKey === key;
+                  const selected =
+                    jobTypeKey === key;
 
-                return (
-                  <Pressable
-                    key={key || index}
-                    style={[
-                      styles.jobTypeButton,
-                      selected && styles.jobTypeSelected,
-                    ]}
-                    onPress={() => setJobTypeKey(key)}
-                  >
-                    <Text
+                  return (
+                    <Pressable
+                      key={
+                        key || index
+                      }
                       style={[
-                        styles.jobTypeText,
-                        selected && styles.jobTypeSelectedText,
+                        styles.jobTypeButton,
+                        selected &&
+                          styles.jobTypeSelected,
                       ]}
+                      onPress={() =>
+                        setJobTypeKey(
+                          key,
+                        )
+                      }
                     >
-                      {name}
-                    </Text>
-                  </Pressable>
-                );
-              })}
+                      <Text
+                        style={[
+                          styles.jobTypeText,
+                          selected &&
+                            styles.jobTypeSelectedText,
+                        ]}
+                      >
+                        {name}
+                      </Text>
+                    </Pressable>
+                  );
+                },
+              )}
             </View>
           )}
+
+          {/* CERTIFICADO */}
 
           <Text style={styles.label}>
             Certificado
           </Text>
 
           <Pressable
-            style={styles.certificateButton}
-            onPress={selectCertificate}
+            style={
+              styles.certificateButton
+            }
+            onPress={
+              selectCertificate
+            }
           >
-            <Text style={styles.certificateButtonText}>
+            <Text
+              style={
+                styles.certificateButtonText
+              }
+            >
               Seleccionar certificado
             </Text>
           </Pressable>
 
           {certificateUri && (
-            <View style={styles.previewContainer}>
+            <View
+              style={
+                styles.previewContainer
+              }
+            >
               <Image
-                source={{ uri: certificateUri }}
-                style={styles.previewImage}
+                source={{
+                  uri: certificateUri,
+                }}
+                style={
+                  styles.previewImage
+                }
+                resizeMode="cover"
               />
 
-              <Text style={styles.fileName}>
+              <Text
+                style={styles.fileName}
+              >
                 {certificateName}
               </Text>
 
               <Pressable
-                style={styles.removeCertificateButton}
+                style={
+                  styles.removeCertificateButton
+                }
                 onPress={() => {
-                  setCertificateUri(null);
-                  setCertificateBase64(null);
-                  setCertificateName("certificado.jpg");
+                  setCertificateUri(
+                    null,
+                  );
+
+                  setCertificateBase64(
+                    null,
+                  );
+
+                  setCertificateName(
+                    "certificado.jpg",
+                  );
                 }}
               >
-                <Text style={styles.removeCertificateText}>
+                <Text
+                  style={
+                    styles.removeCertificateText
+                  }
+                >
                   Quitar certificado
                 </Text>
               </Pressable>
             </View>
           )}
 
+          {/* GUARDAR */}
+
           <Pressable
             style={[
               styles.saveButton,
-              saving && styles.disabledButton,
+              saving &&
+                styles.disabledButton,
             ]}
-            onPress={handleCreateExperience}
+            onPress={
+              handleCreateExperience
+            }
             disabled={saving}
           >
             {saving ? (
-              <ActivityIndicator color="white" />
+              <ActivityIndicator
+                color="white"
+              />
             ) : (
-              <Text style={styles.saveButtonText}>
+              <Text
+                style={
+                  styles.saveButtonText
+                }
+              >
                 Guardar experiencia
               </Text>
             )}
           </Pressable>
 
+          {/* CANCELAR */}
+
           <Pressable
-            style={styles.cancelButton}
-            onPress={cancelForm}
+            style={
+              styles.cancelButton
+            }
+            onPress={resetForm}
             disabled={saving}
           >
-            <Text style={styles.cancelButtonText}>
+            <Text
+              style={
+                styles.cancelButtonText
+              }
+            >
               Cancelar
             </Text>
           </Pressable>
         </View>
       )}
 
-      {experiences.length === 0 && !showForm && (
-        <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>
-            No tienes experiencias registradas
-          </Text>
+      {/* SIN EXPERIENCIAS */}
 
-          <Text style={styles.emptyText}>
-            Aquí aparecerán las experiencias laborales que agregues.
-          </Text>
-        </View>
-      )}
-
-      {experiences.map((experience, index) => (
-        <View
-          style={styles.card}
-          key={experience.id ?? index}
-        >
-          <Text style={styles.cardTitle}>
-            {experience.title ?? "Experiencia"}
-          </Text>
-
-          <Text style={styles.cardDescription}>
-            {experience.description ?? "Sin descripción"}
-          </Text>
-
-          {(experience.jobTypeKey || experience.jobType) && (
-            <Text style={styles.cardType}>
-              Tipo:{" "}
-              {experience.jobType?.name ??
-                experience.jobTypeKey}
-            </Text>
-          )}
-
-          {experience.certificateImage && (
-            <Image
-              source={{ uri: experience.certificateImage }}
-              style={styles.certificateImage}
-            />
-          )}
-
-          {experience.id && (
-            <Pressable
-              style={styles.deleteButton}
-              onPress={() =>
-                handleDeleteExperience(experience.id)
+      {experiences.length === 0 &&
+        !showForm && (
+          <View style={styles.empty}>
+            <Text
+              style={
+                styles.emptyTitle
               }
             >
-              <Text style={styles.deleteButtonText}>
-                Eliminar
+              No tienes experiencias
+              registradas
+            </Text>
+
+            <Text
+              style={
+                styles.emptyText
+              }
+            >
+              Aquí aparecerán las
+              experiencias laborales
+              que agregues.
+            </Text>
+          </View>
+        )}
+
+      {/* LISTA DE EXPERIENCIAS */}
+
+      {experiences.map(
+        (experience, index) => {
+          const certificateUri =
+            getValidCertificateUri(
+              experience.certificateImage,
+            );
+
+          return (
+            <View
+              style={styles.card}
+              key={
+                experience.id ??
+                index
+              }
+            >
+              <Text
+                style={
+                  styles.cardTitle
+                }
+              >
+                {experience.title ??
+                  "Experiencia"}
               </Text>
+<<<<<<< HEAD
             </Pressable>
           )}
         </View>
@@ -506,6 +754,91 @@ export default function Profile() {
       >
         <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
       </Pressable>
+=======
+
+              <Text
+                style={
+                  styles.cardDescription
+                }
+              >
+                {experience.description ??
+                  "Sin descripción"}
+              </Text>
+
+              {(experience.jobTypeKey ||
+                experience.jobType) && (
+                <Text
+                  style={
+                    styles.cardType
+                  }
+                >
+                  Tipo:{" "}
+                  {experience
+                    .jobType?.name ??
+                    experience.jobTypeKey}
+                </Text>
+              )}
+
+              {/* CERTIFICADO */}
+
+              {certificateUri ? (
+                <>
+                  <Text
+                    style={
+                      styles.certificateTitle
+                    }
+                  >
+                    Certificado
+                  </Text>
+
+                  <Image
+                    source={{
+                      uri: certificateUri,
+                    }}
+                    style={
+                      styles.certificateImage
+                    }
+                    resizeMode="cover"
+                  />
+                </>
+              ) : experience.certificateImage ? (
+                <Text
+                  style={
+                    styles.certificateSaved
+                  }
+                >
+                  ✓ Certificado
+                  registrado
+                </Text>
+              ) : null}
+
+              {/* ELIMINAR */}
+
+              {experience.id && (
+                <Pressable
+                  style={
+                    styles.deleteButton
+                  }
+                  onPress={() =>
+                    handleDeleteExperience(
+                      experience.id,
+                    )
+                  }
+                >
+                  <Text
+                    style={
+                      styles.deleteButtonText
+                    }
+                  >
+                    Eliminar
+                  </Text>
+                </Pressable>
+              )}
+            </View>
+          );
+        },
+      )}
+>>>>>>> feature/brandy-perfil
     </ScrollView>
   );
 }
@@ -532,7 +865,42 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     color: "#17202A",
+    marginBottom: 20,
+  },
+
+  accountMenu: {
+    flexDirection: "row",
+    gap: 12,
     marginBottom: 25,
+  },
+
+  accountButton: {
+    flex: 1,
+    backgroundColor: "#344054",
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 55,
+  },
+
+  aboutButton: {
+    flex: 1,
+    backgroundColor: "#208AEF",
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 55,
+  },
+
+  accountButtonText: {
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 
   subtitle: {
@@ -656,7 +1024,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     borderRadius: 12,
-    resizeMode: "cover",
   },
 
   fileName: {
@@ -748,13 +1115,26 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
+  certificateTitle: {
+    marginTop: 15,
+    marginBottom: 8,
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#344054",
+  },
+
   certificateImage: {
     width: "100%",
     height: 180,
     borderRadius: 10,
-    marginTop: 15,
-    resizeMode: "cover",
     backgroundColor: "#E5E7EB",
+  },
+
+  certificateSaved: {
+    marginTop: 15,
+    fontSize: 14,
+    color: "#22C55E",
+    fontWeight: "bold",
   },
 
   deleteButton: {
