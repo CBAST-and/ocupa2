@@ -76,7 +76,7 @@ export default function Setup() {
             });
 
             Alert.alert("Perfil completado", "Tus datos se guardaron correctamente.");
-            router.replace("/");
+            router.replace("/dashboard");
         } catch (error) {
             setErrorMessage(
                 error instanceof Error ? error.message : "No se pudo actualizar el perfil.",

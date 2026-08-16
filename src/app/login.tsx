@@ -11,6 +11,7 @@ import { forgotPassword, login, register, saveToken } from "../services/auth";
 import { authStyles } from "../styles/authStyles";
 
 import { AuthMode } from "@/types/AuthMode";
+import { setStoredJson } from "@/services/storage";
 
 export default function Index() {
   const [mode, setMode] = useState<AuthMode>("login");
@@ -29,16 +30,17 @@ export default function Index() {
       console.log(response);
 
       await saveToken(response.data.token);
+            await setStoredJson("ocupa2_session_user", { email });
 
       if (!response.data.profileCompleted) {
         router.replace("/setup");
       } else {
         Alert.alert(
           "Ya esta registrado",
-          "Ya tu cuenta esta registrada! mensaje temporal",
+          "Ya tu cuenta esta registrada!",
         );
 
-        router.replace("/");
+        router.replace("/dashboard");
       }
     } catch (error) {
       console.error(error);
@@ -56,6 +58,7 @@ export default function Index() {
       );
 
       await saveToken(response.data.token);
+      await setStoredJson("ocupa2_session_user", { email, firstName: nombre });
 
       router.replace("/setup");
 

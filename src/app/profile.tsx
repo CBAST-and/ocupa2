@@ -23,6 +23,8 @@ import {
   uploadCertificate,
 } from "@/services/experiences";
 
+import { deleteToken } from "@/services/auth";
+
 export default function Profile() {
   const [loading, setLoading] = useState(true);
 
@@ -51,6 +53,11 @@ export default function Profile() {
   useEffect(() => {
     loadData();
   }, []);
+
+  const handleLogout = async () => {
+    await deleteToken();
+    router.replace("/");
+  };
 
   // ==============================
   // CARGAR EXPERIENCIAS Y TIPOS
@@ -405,6 +412,21 @@ export default function Profile() {
             }
           >
             CAMBIAR CONTRASEÑA
+          </Text>
+        </Pressable>
+        
+        <Pressable
+          style={styles.accountButton}
+          onPress={() =>
+            router.push("/dashboard")
+          }
+        >
+          <Text
+            style={
+              styles.accountButtonText
+            }
+          >
+            DASHBOARD
           </Text>
         </Pressable>
 
@@ -812,6 +834,14 @@ export default function Profile() {
           );
         },
       )}
+
+      <Pressable
+        style={styles.logoutButton}
+        onPress={handleLogout}
+      >
+        <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+      </Pressable>
+
     </ScrollView>
   );
 }
@@ -1123,4 +1153,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 14,
   },
+
+  logoutButton: {
+    backgroundColor: "#D92D20",
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 20,
+  },
+
+  logoutButtonText: {
+    color: "#ffffff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+
 });
