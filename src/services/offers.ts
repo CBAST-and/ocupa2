@@ -181,11 +181,16 @@ export async function createOffer(payload: CreateOfferPayload): Promise<Offer> {
   }
 
   const data = await response.json();
+
+  console.log(`ENVIO DE OFERTA: ${data.ok}`);
+  if (!data.ok){
+    console.log(`detalle envio: ${data.error}`)
+  }
   if (response.status === 401) throw new Error("Tu sesión expiró. Inicia sesión nuevamente.");
   if (response.status === 402) throw new Error(data?.message || "El pago no está aprobado o no es válido.");
   if (response.status === 422) throw new Error(data?.message || "Revisa los datos de la oferta y la foto.");
   if (!response.ok || !data?.ok) throw new Error(data?.message || "No se pudo publicar la oferta.");
-  return data.data;
+  return data.data; 
 }
 
 // Lista únicamente las ofertas publicadas por el usuario autenticado.
