@@ -11,6 +11,15 @@ export default function RootLayout() {
       <Stack.Screen name="offers/index" options={{title: "Explorar ofertas"}}/>
       <Stack.Screen name="offers/[id]" options={{title: "Detalle de oferta"}}/>
       <Stack.Screen name="offers/map" options={{title: "Mapa de ofertas"}}/>
+
+      <Stack.Screen name="about" options={{ title: "Acerca de" }}/>
+
+      <Stack.Screen name="change-password" options={{ title: "Cambiar contraseña" }}/>
+
+      <Stack.Screen name="profile" options={{ title: "Mi perfil" }}/>
+
     </Stack>
+    
   );
 }
+

@@ -69,6 +69,29 @@ export default function ImageSlider() {
         <Pressable style={styles.button} onPress={() => router.push("/news")}>
           <Text style={styles.loginText}>NOTICIAS</Text>
         </Pressable>
+
+
+
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/about")}>
+        <Text style={styles.loginText}>ACERCA DE</Text>
+        </Pressable>
+
+
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/change-password")}>
+        <Text style={styles.loginText}>CAMBIAR CONTRASEÑA</Text>
+        </Pressable>
+
+
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/profile")}>
+        <Text style={styles.loginText}>MI PERFIL</Text>
+        </Pressable>
+
       </View>
       <Pressable
         style={styles.offersButton}
