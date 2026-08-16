@@ -1,13 +1,14 @@
-import { router } from "expo-router";
-import { useEffect, useRef } from "react";
+import { getToken } from "@/services/auth";
+import { router, useFocusEffect } from "expo-router";
+import { useEffect, useRef, useState, useCallback} from "react";
 import {
-  View,
-  Text,
-  Image,
   Animated,
   Dimensions,
-  StyleSheet,
+  Image,
   Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -20,6 +21,8 @@ const images = [
 ];
 
 export default function ImageSlider() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const translateX = useRef(new Animated.Value(0)).current;
 
   // Efecto infinito de imagenes
@@ -43,6 +46,17 @@ export default function ImageSlider() {
     };
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      const checkToken = async () => {
+        const token = await getToken();
+        setIsLoggedIn(!!token);
+      };
+
+      checkToken();
+    }, [])
+  );
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>OCUPA2</Text>
@@ -62,13 +76,45 @@ export default function ImageSlider() {
         <Pressable style={styles.button} onPress={() => router.push("/videos")}>
           <Text style={styles.loginText}>VIDEOS</Text>
         </Pressable>
-        <Pressable style={styles.login} onPress={() => router.push("/login")}>
-          <Text style={styles.loginText}>LOGIN</Text>
-        </Pressable>
+
+        {!isLoggedIn && (
+          <Pressable style={styles.login} onPress={() => router.push("/login")}>
+            <Text style={styles.loginText}>LOGIN</Text>
+          </Pressable>
+        )}
+
         <Pressable style={styles.button} onPress={() => router.push("/news")}>
           <Text style={styles.loginText}>NOTICIAS</Text>
         </Pressable>
+
+        <Pressable style={styles.button} onPress={() => router.push("/about")}>
+          <Text style={styles.loginText}>ACERCA DE</Text>
+        </Pressable>
+
+        {isLoggedIn && (
+          <>
+            <Pressable
+              style={styles.button}
+              onPress={() => router.push("/change-password")}>
+              <Text style={styles.loginText}>CAMBIAR CONTRASEÑA</Text>
+            </Pressable>
+
+            <Pressable
+              style={styles.button}
+              onPress={() => router.push("/profile")}>
+              <Text style={styles.loginText}>MI PERFIL</Text>
+            </Pressable>
+          </>
+        )}
       </View>
+      <Pressable
+        style={styles.offersButton}
+        onPress={async () => {
+          const token = await getToken();
+          router.push(token ? "/offers" : "/login");
+        }}>
+        <Text style={styles.loginText}>EXPLORAR OFERTAS</Text>
+      </Pressable>
     </View>
   );
 }
@@ -86,7 +132,8 @@ const styles = StyleSheet.create({
   sideContainer: {
     width: "100%",
     flexDirection: "row",
-    alignContent: "space-between",
+    flexWrap: "wrap",
+    justifyContent: "center",
   },
 
   image: {
@@ -109,34 +156,43 @@ const styles = StyleSheet.create({
   },
 
   login: {
+    width: "30%",
+    aspectRatio: 1,
     borderRadius: 20,
     borderWidth: 2,
     backgroundColor: "rgb(53, 255, 131)",
     borderColor: "rgb(87, 190, 127)",
-    margin: 20,
-    padding: 20,
-    width: 150,
+    margin: "1.5%",
     alignItems: "center",
-    alignSelf: "center",
-    flex: 1
+    justifyContent: "center",
   },
 
   button: {
+    width: "30%",
+    aspectRatio: 1,
     borderRadius: 20,
     borderWidth: 2,
     backgroundColor: "rgb(53, 107, 255)",
     borderColor: "rgb(87, 102, 190)",
-    margin: 20,
-    padding: 20,
-    width: 150,
+    margin: "1.5%",
     alignItems: "center",
-    alignSelf: "center",
-    flex: 1
+    justifyContent: "center",
   },
 
   loginText: {
-    fontSize: 20,
+    fontSize: 12,
     color: "white",
     fontWeight: "bold",
+  },
+
+  offersButton: {
+    borderRadius: 20,
+    borderWidth: 2,
+    backgroundColor: "rgb(53, 107, 255)",
+    borderColor: "rgb(87, 102, 190)",
+    marginHorizontal: 20,
+    marginBottom: 20,
+    padding: 16,
+    alignItems: "center",
   },
 });
