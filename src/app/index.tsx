@@ -178,6 +178,17 @@ export default function ImageSlider() {
             </Text>
           </Pressable>
         )}
+
+        {/* ESPACIO DE TRABAJO: ofertas, aplicaciones y pagos */}
+
+        {isLoggedIn && (
+          <Pressable
+            style={styles.button}
+            onPress={() => router.push("/dashboard")}
+          >
+            <Text style={styles.buttonText}>MI ESPACIO</Text>
+          </Pressable>
+        )}
       </View>
 
       {/* EXPLORAR OFERTAS */}
