@@ -2,7 +2,7 @@ import { applyToOffer, getOfferById } from "@/services/offers";
 import { colors, contractTypeColors, radius, spacing, type } from "@/styles/tokens";
 import { Offer, OfferQuestion } from "@/types/OfferType";
 import { formatDateEs } from "@/utils/date";
-import DateTimePicker from "@expo/ui/community/datetime-picker";
+import DateTimePicker from "@/components/DateTimePicker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {

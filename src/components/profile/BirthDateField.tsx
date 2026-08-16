@@ -1,6 +1,6 @@
 import { profileStyles } from "@/styles/profileStyles";
 import { formatDateEs } from "@/utils/date";
-import DateTimePicker from "@expo/ui/community/datetime-picker";
+import DateTimePicker from "@/components/DateTimePicker";
 import { useState } from "react";
 import { Pressable, Text } from "react-native";
 
@@ -41,7 +41,7 @@ export default function BirthDateField({ value, onChange }: BirthDateFieldProps)
                     maximumDate={TODAY}
                     onValueChange={(_event, selectedDate) => {
                         setShow(false);
-                        onChange(selectedDate);
+                        if (selectedDate) onChange(selectedDate);
                     }}
                     onDismiss={() => setShow(false)}
                 />

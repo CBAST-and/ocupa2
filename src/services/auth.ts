@@ -1,5 +1,5 @@
 import { API_URL } from "@/config/api";
-import * as SecureStore from "expo-secure-store";
+import * as tokenStorage from "@/services/tokenStorage";
 
 // REGISTRO
 export async function register(
@@ -107,13 +107,13 @@ export async function forgotPassword(
 const TOKEN_KEY = "bearer_token";
 
 export async function saveToken(token: string) {
-  await SecureStore.setItemAsync(TOKEN_KEY, token);
+  await tokenStorage.saveToken(TOKEN_KEY, token);
 }
 
 export async function getToken() {
-  return await SecureStore.getItemAsync(TOKEN_KEY);
+  return tokenStorage.getToken(TOKEN_KEY);
 }
 
 export async function deleteToken() {
-  await SecureStore.deleteItemAsync(TOKEN_KEY);
+  await tokenStorage.deleteToken(TOKEN_KEY);
 }
