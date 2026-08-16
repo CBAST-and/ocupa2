@@ -1,6 +1,6 @@
 import { getToken } from "@/services/auth";
-import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useEffect, useRef, useState, useCallback} from "react";
 import {
   Animated,
   Dimensions,
@@ -46,14 +46,16 @@ export default function ImageSlider() {
     };
   }, []);
 
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = await getToken();
-      setIsLoggedIn(!!token);
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const checkToken = async () => {
+        const token = await getToken();
+        setIsLoggedIn(!!token);
+      };
 
-    checkToken();
-  }, []);
+      checkToken();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
