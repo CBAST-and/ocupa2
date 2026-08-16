@@ -9,7 +9,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -26,8 +25,6 @@ type Offer = {
 const initialOffers: Offer[] = [];
 
 export default function Dashboard() {
-  const { width } = useWindowDimensions();
-  const compact = width < 820;
   const [section, setSection] = useState<Section>("publish");
   const [offers, setOffers] = useState<Offer[]>(initialOffers);
   const [sessionUser, setSessionUser] = useState<{
@@ -140,8 +137,8 @@ export default function Dashboard() {
           </View>
         </View>
       </View>
-      <View style={[styles.body, compact && styles.bodyCompact]}>
-        <View style={[styles.sidebar, compact && styles.sidebarCompact]}>
+      <View style={styles.body}>
+        <View style={styles.sidebar}>
           <Text style={styles.menuLabel}>MI ESPACIO</Text>
           <NavItem
             label="Publicar oferta"
@@ -167,23 +164,14 @@ export default function Dashboard() {
             active={section === "payments"}
             onPress={() => nav("payments")}
           />
-          <View style={styles.sidebarBottom}>
-            <Text style={styles.sidebarHint}>¿Necesitas ayuda?</Text>
-            <Text style={styles.sidebarSupport}>
-              Escríbenos y te acompañamos.
-            </Text>
-          </View>
         </View>
         <ScrollView
           style={styles.mainScroll}
-          contentContainerStyle={[
-            styles.content,
-            compact && styles.contentCompact,
-          ]}
-        >
+          contentContainerStyle={styles.content}>
           <Text style={styles.eyebrow}>{current.eyebrow}</Text>
           <Text style={styles.heading}>{current.title}</Text>
           <Text style={styles.copy}>{current.copy}</Text>
+
           {section === "publish" && (
             <PublishForm
               title={title}
@@ -197,11 +185,20 @@ export default function Dashboard() {
               onSubmit={publish}
             />
           )}
+
           {section === "offers" && (
             <Offers offers={offers} onPublish={() => nav("publish")} />
           )}
+
           {section === "applications" && <Applications />}
           {section === "payments" && <Payments />}
+
+          <View style={styles.mobileHelp}>
+            <Text style={styles.sidebarHint}>¿Necesitas ayuda?</Text>
+            <Text style={styles.sidebarSupport}>
+              Escríbenos y te acompañamos.
+            </Text>
+          </View>
         </ScrollView>
       </View>
     </View>
@@ -425,6 +422,7 @@ const styles = StyleSheet.create({
   },
   mainScroll: {
     flex: 1,
+    width: "100%",
   },
   brand: {
     color: "#172338",
@@ -447,28 +445,24 @@ const styles = StyleSheet.create({
   userRole: { color: "#8a95a5", fontSize: 12, marginTop: 2 },
   body: {
     flex: 1,
-    flexDirection: "row",
-    maxWidth: 1280,
     width: "100%",
-    alignSelf: "center",
   },
-  bodyCompact: { flexDirection: "column" },
   sidebar: {
-    width: 250,
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 24,
-    borderRightWidth: 1,
-    borderRightColor: "#e8edf3",
-  },
-  sidebarCompact: {
     width: "100%",
+    backgroundColor: "#fff",
     padding: 12,
     flexDirection: "row",
     flexWrap: "wrap",
-    borderRightWidth: 0,
     borderBottomWidth: 1,
+    borderBottomColor: "#e8edf3",
   },
+  mobileHelp: {
+    marginTop: 32,
+    padding: 14,
+    backgroundColor: "#f7f9fc",
+    borderRadius: 10,
+  },
+
   menuLabel: {
     color: "#a2acb9",
     fontSize: 11,
@@ -478,7 +472,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   navItem: {
-    minHeight: 44,
+    width: "50%",
+    minHeight: 42,
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -501,12 +496,6 @@ const styles = StyleSheet.create({
     right: 0,
   },
   pressed: { opacity: 0.72 },
-  sidebarBottom: {
-    marginTop: "auto",
-    padding: 14,
-    backgroundColor: "#f7f9fc",
-    borderRadius: 10,
-  },
   sidebarHint: { color: "#172338", fontWeight: "700", fontSize: 12 },
   sidebarSupport: {
     color: "#8a95a5",
@@ -514,8 +503,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-  content: { padding: 44, maxWidth: 900, width: "100%" },
-  contentCompact: { padding: 22 },
+  content: { padding: 22, width: "100%" },
   eyebrow: {
     color: "#1fae66",
     fontWeight: "800",
@@ -612,14 +600,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 13,
-  },
-  offerIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: "#eef5ff",
-    justifyContent: "center",
-    alignItems: "center",
   },
   offerIcon: {
     width: 40,
